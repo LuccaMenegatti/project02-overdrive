@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectOverdrive.API.Enum;
+using ProjectOverdrive.API.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectOverdrive.API.Models
 {
     [Table("company")]
-    public class Company
+    public class Company : BaseEntity
     {
         [Column("cnpj")]
         [Required]
@@ -12,7 +14,7 @@ namespace ProjectOverdrive.API.Models
         public string Cnpj { get; set; }
 
         [Column("status")]
-        public bool Status { get; set; }
+        public Status Status { get; set; }
 
         [Column("start_date")]
         public DateTime StartDate { get; set; }

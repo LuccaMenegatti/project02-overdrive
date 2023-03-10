@@ -1,23 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectOverdrive.API.Enum;
+using ProjectOverdrive.API.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectOverdrive.API.Models
+namespace ProjectOverdrive.API.Models 
 {
     [Table("people")]
-    public class People
-    {
-        [Column("id")]
-        public int Id { get; set; }
-
+    public class People : BaseEntity
+    { 
         [Column("name")]
         [Required]
         [StringLength(80)]
         public string Name { get; set; }
 
-        [Column("document")]
+        [Column("cpf")]
         [Required]
         [StringLength(14)]
-        public string Document { get; set; }
+        public string cpf { get; set; }
 
         [Column("number_contact")]
         [StringLength(20)]
@@ -29,6 +28,9 @@ namespace ProjectOverdrive.API.Models
         public string UserName { get; set; }
 
         [Column("status")]
-        public bool Status { get; set; }
+        public Status Status { get; set; }
+
+        [ForeignKey("IdCompany")]
+        public virtual Company company { get; set; }
     }
 }
