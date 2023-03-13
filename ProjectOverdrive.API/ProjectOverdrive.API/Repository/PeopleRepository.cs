@@ -9,17 +9,17 @@ namespace ProjectOverdrive.API.Repository
     public class PeopleRepository : IPeopleRepository
     {
         private readonly ApiDbContext _dbContext;
-        public PeopleRepository(ApiDbContext apiDbContext, ApiDbContext dbContext) 
+        public PeopleRepository(ApiDbContext apiDbContext) 
         {
-            _dbContext = dbContext;
+            _dbContext = apiDbContext;
         }
 
-        public async Task<People> SearchById(int id)
+        public async Task<People> SearchPeopleById(int id)
         {
             return await _dbContext.People.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<People> SearchByName(string name)
+        public async Task<People> SearchPeopleByName(string name)
         {
             return await _dbContext.People.FirstOrDefaultAsync(p => p.Name == name);
         }
@@ -31,20 +31,50 @@ namespace ProjectOverdrive.API.Repository
 
         public async Task<People> AddPeople(People people)
         {
-            _dbContext.People.Add(people);
-            _dbContext.SaveChanges();
+            await _dbContext.People.AddAsync(people);
+            await _dbContext.SaveChangesAsync();
 
             return people;
         }
 
-        public Task<People> UpdatePeople(People people, int id)
+        public async Task<People> UpdatePeople(People people, int id)
         {
-            throw new NotImplementedException();
+            People peopleById = await SearchPeopleById(id);
+
+            if(peopleById == null)
+            {
+                throw new Exception($"Pessoa do ID: {id} não foi encontrada " +
+                    $"no banco de dados.");
+            }
+
+            peopleById.Name = people.Name;
+            peopleById.Cpf = people.Cpf;
+            peopleById.NumberContact = people.NumberContact;
+            peopleById.UserName = people.UserName;
+            peopleById.Status = people.Status;
+            peopleById.Company = people.Company;
+
+            _dbContext.People.Update(peopleById);
+            await _dbContext.SaveChangesAsync();
+
+            return peopleById;
         }
 
-        public Task<bool> DeletePeople(int id)
+        public async Task<bool> DeletePeople(int id)
         {
-            throw new NotImplementedException();
+            People peopleById = await SearchPeopleById(id);
+
+            if (peopleById == null)
+            {
+                throw new Exception($"Pessoa do ID: {id} não foi encontrada " +
+                    $"no banco de dados.");
+            }
+
+            _dbContext.People.Remove(peopleById);
+            await _dbContext.SaveChangesAsync();
+
+            return true;
+
         }
 
         

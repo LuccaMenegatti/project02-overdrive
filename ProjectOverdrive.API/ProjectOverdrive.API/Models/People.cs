@@ -16,7 +16,7 @@ namespace ProjectOverdrive.API.Models
         [Column("cpf")]
         [Required]
         [StringLength(14)]
-        public string cpf { get; set; }
+        public string Cpf { get; set; }
 
         [Column("number_contact")]
         [StringLength(20)]
@@ -31,6 +31,6 @@ namespace ProjectOverdrive.API.Models
         public Status Status { get; set; }
 
         [ForeignKey("IdCompany")]
-        public virtual Company company { get; set; }
+        public virtual Company Company { get; set; }
     }
 }
