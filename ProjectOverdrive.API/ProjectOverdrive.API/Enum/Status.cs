@@ -1,9 +1,14 @@
-﻿namespace ProjectOverdrive.API.Enum
+﻿using System.ComponentModel;
+
+namespace ProjectOverdrive.API.Enum
 {
     public enum Status
     {
-        Inactive,
-        Active,
-        Pending
+        [Description("Inativo")]
+        Inactive = 1,
+        [Description("Ativo")]
+        Active = 2,
+        [Description("Pendente")]
+        Pending = 3
     }
 }

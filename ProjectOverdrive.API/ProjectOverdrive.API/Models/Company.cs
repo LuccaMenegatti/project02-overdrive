@@ -39,10 +39,12 @@ namespace ProjectOverdrive.API.Models
         [StringLength(50)]
         public string LegalNature { get; set; }
 
+        [Column("Finance")]
+        public double Finance { get; set; }
+
         [ForeignKey("IdAddress")]
         public virtual Address Address { get; set;}
 
-        [Column("Finance")]
-        public double Finance { get; set; }
+        
     }
 }

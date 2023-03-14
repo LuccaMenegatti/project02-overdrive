@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using ProjectOverdrive.API.Data;
+using ProjectOverdrive.API.Repository;
+using ProjectOverdrive.API.Repository.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connection = builder.Configuration["MySqlConnection:MySqlConnectionString"];
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseMySql(connection,
     new MySqlServerVersion(new Version(8, 0, 32))));
+
+builder.Services.AddScoped<IPeopleRepository, PeopleRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+
 
 // Add services to the container.
 
