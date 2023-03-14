@@ -1,4 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
+using ProjectOverdrive.API.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var connection = builder.Configuration["MySqlConnection:MySqlConnectionString"];
+builder.Services.AddDbContext<ApiDbContext>(options => options.UseMySql(connection,
+    new MySqlServerVersion(new Version(8, 0, 32))));
 
 // Add services to the container.
 

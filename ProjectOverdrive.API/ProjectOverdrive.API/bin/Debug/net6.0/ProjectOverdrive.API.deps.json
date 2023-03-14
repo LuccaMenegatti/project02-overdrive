@@ -9,6 +9,7 @@
       "ProjectOverdrive.API/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "6.0.14",
+          "Microsoft.EntityFrameworkCore.Design": "6.0.14",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.14",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.2",
           "Swashbuckle.AspNetCore": "6.2.3"
