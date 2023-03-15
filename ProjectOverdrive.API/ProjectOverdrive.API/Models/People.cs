@@ -31,6 +31,6 @@ namespace ProjectOverdrive.API.Models
         public Status Status { get; set; }
 
         [ForeignKey("IdCompany")]
-        public virtual Company Company { get; set; }
+        public virtual Company? Company { get; set; }
     }
 }
