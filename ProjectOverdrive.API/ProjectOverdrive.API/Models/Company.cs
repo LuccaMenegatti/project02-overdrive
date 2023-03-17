@@ -1,5 +1,6 @@
 ﻿using ProjectOverdrive.API.Enum;
 using ProjectOverdrive.API.Models.Base;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,7 @@ namespace ProjectOverdrive.API.Models
         public Status Status { get; set; }
 
         [Column("start_date")]
+        [Required]
         public DateTime StartDate { get; set; }
 
         [Column("name_company")]
@@ -25,7 +27,6 @@ namespace ProjectOverdrive.API.Models
         public string CompanyName { get; set; }
 
         [Column("fantasy_name")]
-        [Required]
         [StringLength(120)]
         public string FantasyName { get; set; }
 
@@ -35,16 +36,18 @@ namespace ProjectOverdrive.API.Models
         public string Cnae { get; set; }
 
         [Column("legal_nature")]
-        [Required]
         [StringLength(50)]
         public string LegalNature { get; set; }
 
-        [Column("Finance")]
-        public double Finance { get; set; }
+        [Column("IdAddress")]
+        public int IdAddress { get; set; }
 
         [ForeignKey("IdAddress")]
-        public virtual Address Address { get; set;}
+        public Address Address { get; set;}
 
-        
+        [Column("Finance")]
+        [Required]
+        public double Finance { get; set; }
+        public IEnumerable<People> peoples { get; set; }
     }
 }

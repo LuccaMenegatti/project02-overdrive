@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjectOverdrive.API.Data.ValueObjects.Request;
+using ProjectOverdrive.API.Data.ValueObjects.Response;
 using ProjectOverdrive.API.Models;
+using ProjectOverdrive.API.Repository;
 using ProjectOverdrive.API.Repository.Interfaces;
 
 namespace ProjectOverdrive.API.Controllers
@@ -17,45 +20,55 @@ namespace ProjectOverdrive.API.Controllers
         [HttpGet("SearchCompany")]
         public async Task<ActionResult<List<Company>>> SearchCompany()
         {
-            List<Company> company = await _companyRepository.SearchCompany();
+            var company = await _companyRepository.SearchCompany();
             return Ok(company);
         }
 
-        [HttpGet("SearchCompanyById/{id}")]
-        public async Task<ActionResult<List<Company>>> SearchCompanyById(int id)
+
+        [HttpGet("SearchCompanyByCnpj/{cnpj}")]
+        public async Task<ActionResult<List<CompanyResponse>>> SearchCompanyByCnpj(string cnpj)
         {
-            Company company = await _companyRepository.SearchCompanyById(id);
+            var company = await _companyRepository.SearchCompanyByCnpj(cnpj);
+            if (company == null) return NotFound();
             return Ok(company);
         }
 
         [HttpGet("SearchCompanyByName/{name}")]
-        public async Task<ActionResult<List<Company>>> SearchCompanyByName(string name)
+        public async Task<ActionResult<List<CompanyResponse>>> SearchCompanyByName(string name)
         {
-            Company company = await _companyRepository.SearchCompanyByName(name);
+            var company = await _companyRepository.SearchCompanyByName(name);
+            if (company == null) return NotFound();
             return Ok(company);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Company>> AddCompany([FromBody] Company company)
+        [HttpGet("SearchPeopleInCompany{id}")]
+        public async Task<ActionResult<CompanyResponse>> SearchPeopleInCompany(int id)
         {
-            Company companyAdd = await _companyRepository.AddCompany(company);
+            var peoples = await _companyRepository.SearchPeopleInCompany(id);
+            return Ok(peoples);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CompanyRequest>> AddCompany([FromBody] CompanyRequest vo)
+        {
+            if (vo == null) return BadRequest();
+            var companyAdd = await _companyRepository.AddCompany(vo);
             return Ok(companyAdd);
         }
 
-        [HttpPut("UpdateCompany/{id}")]
-        public async Task<ActionResult<Company>> UpdateCompany([FromBody] Company company,
-            int id)
+        [HttpPut("UpdateCompany")]
+        public async Task<ActionResult<CompanyUpdateRequest>> UpdateCompany([FromBody] CompanyUpdateRequest vo)
         {
-            company.Id = id;
-            Company companyUpdate = await _companyRepository.UpdateCompany(company, id);
+            if (vo == null) return BadRequest();
+            var companyUpdate = await _companyRepository.UpdateCompany(vo);
             return Ok(companyUpdate);
         }
 
-        [HttpDelete("DeleteCompany/{id}")]
+        [HttpDelete("DeleteCompany")]
         public async Task<ActionResult<Company>> DeleteCompany(int id)
         {
-
-            bool deleted = await _companyRepository.DeleteCompany(id);
+            var deleted = await _companyRepository.DeleteCompany(id);
+            if (!deleted) return BadRequest();
             return Ok(deleted);
         }
     }

@@ -1,8 +1,6 @@
-﻿using ProjectOverdrive.API.Models.Base;
-
-namespace ProjectOverdrive.API.Models
+﻿namespace ProjectOverdrive.API.Data.ValueObjects.Response
 {
-    public class Address : BaseEntity
+    public class AddressResponse
     {
         public string Cep { get; set; }
         public string Street { get; set; }

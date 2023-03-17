@@ -23,14 +23,18 @@ namespace ProjectOverdrive.API.Models
         public string NumberContact { get; set; }
 
         [Column("username")]
-        [Required]
         [StringLength(50)]
         public string UserName { get; set; }
 
         [Column("status")]
         public Status Status { get; set; }
 
+        [Column("IdCompany")]
+        public int? IdCompany { get; set; }
+
         [ForeignKey("IdCompany")]
-        public virtual Company? Company { get; set; }
+        public Company Company { get; set; }
+
+
     }
 }

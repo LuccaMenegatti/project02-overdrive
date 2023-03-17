@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectOverdrive.API.Data.ValueObjects.Request;
+using ProjectOverdrive.API.Data.ValueObjects.Response;
 using ProjectOverdrive.API.Models;
+using ProjectOverdrive.API.Repository;
 using ProjectOverdrive.API.Repository.Interfaces;
 
 namespace ProjectOverdrive.API.Controllers
@@ -16,47 +19,50 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpGet("SearchPeople")]
-        public async Task<ActionResult<List<People>>> SearchPeople()
+        public async Task<ActionResult<List<PeopleResponse>>> SearchPeople()
         {
-            List<People> people = await _peopleRepository.SearchPeople();
+            var people = await _peopleRepository.SearchPeople();
             return Ok(people);
         }
 
-        [HttpGet("SearchPeopleById/{id}")]
-        public async Task<ActionResult<List<People>>> SearchPeopleById(int id)
-        {
-            People people = await _peopleRepository.SearchPeopleById(id);
-            return Ok(people);
-        }
 
         [HttpGet("SearchPeopleByName/{name}")]
-        public async Task<ActionResult<List<People>>> SearchPeopleByName(string name)
+        public async Task<ActionResult<List<PeopleResponse>>> SearchPeopleByName(string name)
         {
-            People people = await _peopleRepository.SearchPeopleByName(name);
+            var people = await _peopleRepository.SearchPeopleByName(name);
+            if (people == null) return NotFound();
+            return Ok(people);
+        }
+
+        [HttpPut("AddPeopleInCompany")]
+        public async Task<ActionResult<PeopleRequest>> AddPeopleInCompany(int idPeople, int idCompany)
+        {
+            if (idPeople == null && idCompany == null) return BadRequest();
+            var people = await _peopleRepository.AddPeopleInCompany(idPeople, idCompany);
             return Ok(people);
         }
 
         [HttpPost]
-        public async Task<ActionResult<People>> AddPeople([FromBody] People people)
+        public async Task<ActionResult<PeopleRequest>> AddPeople([FromBody] PeopleRequest vo)
         {
-            People peopleAdd =  await _peopleRepository.AddPeople(people);
+            if (vo == null) return BadRequest(); 
+            var peopleAdd =  await _peopleRepository.AddPeople(vo);
             return Ok(peopleAdd);
         }
 
-        [HttpPut("UpdatePeople/{id}")]
-        public async Task<ActionResult<People>> UpdatePeople([FromBody] People people,
-            int id)
+        [HttpPut("UpdatePeople")]
+        public async Task<ActionResult<PeopleUpdateRequest>> UpdatePeople([FromBody] PeopleUpdateRequest vo)
         {
-            people.Id = id;
-            People peopleUpdate = await _peopleRepository.UpdatePeople(people, id);
+            if (vo == null) return BadRequest();
+            var peopleUpdate = await _peopleRepository.UpdatePeople(vo);
             return Ok(peopleUpdate);
         }
 
         [HttpDelete("DeletePeople/{id}")]
         public async Task<ActionResult<People>> DeletePeople(int id)
         {
-           
-            bool deleted = await _peopleRepository.DeletePeople(id);
+            var deleted = await _peopleRepository.DeletePeople(id);
+            if(!deleted) return BadRequest();
             return Ok(deleted);
         }
     }

@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "83Nmf3O6V87WUbofZJvRv2U2f8hx1Ksn0f0BKsfzvtGs0SWpwr+ElEyOf6GcWnjuGaILbS6b/cHN204F41jQsA==",
+  "dgSpecHash": "9LqlCam6zKZnDGzQOY0YwAp+Iw/TIu+cfpiKU3aYQKnlOp69qQT9C8PAAFGMendoi2Lr/KohVF6SFe6Y479GoQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\lucca\\OneDrive\\Documentos\\repositorios\\projeto02-overdrive\\ProjectOverdrive.API\\ProjectOverdrive.API\\ProjectOverdrive.API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\lucca\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\lucca\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\lucca\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.14\\microsoft.entityframeworkcore.6.0.14.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.14\\microsoft.entityframeworkcore.abstractions.6.0.14.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\6.0.14\\microsoft.entityframeworkcore.analyzers.6.0.14.nupkg.sha512",

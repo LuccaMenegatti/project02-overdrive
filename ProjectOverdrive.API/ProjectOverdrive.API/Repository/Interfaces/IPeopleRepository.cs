@@ -1,16 +1,16 @@
-﻿using ProjectOverdrive.API.Models;
+﻿using ProjectOverdrive.API.Data.ValueObjects.Request;
+using ProjectOverdrive.API.Data.ValueObjects.Response;
+using ProjectOverdrive.API.Models;
 
 namespace ProjectOverdrive.API.Repository.Interfaces
 {
     public interface IPeopleRepository
     {
-        Task<List<People>> SearchPeople();
-        Task<People> SearchPeopleById(int id);
-        Task<People> SearchPeopleByName(string name);
-        Task<People> AddPeople(People people);
-        Task<People> UpdatePeople(People people, int id);
+        Task<List<PeopleResponse>> SearchPeople();
+        Task<PeopleResponse> SearchPeopleByName(string name);
+        Task<PeopleRequest> AddPeopleInCompany(int idPeople, int idCompany);
+        Task<PeopleRequest> AddPeople(PeopleRequest vo);
+        Task<PeopleUpdateRequest> UpdatePeople(PeopleUpdateRequest vo);
         Task<bool> DeletePeople(int id);
-
-
     }
 }

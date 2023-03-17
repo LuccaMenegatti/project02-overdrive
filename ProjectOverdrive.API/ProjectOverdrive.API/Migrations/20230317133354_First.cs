@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectOverdrive.API.Migrations
 {
-    public partial class InitialDb : Migration
+    public partial class First : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,7 +23,8 @@ namespace ProjectOverdrive.API.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Street = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    District = table.Column<int>(type: "int", nullable: false),
+                    District = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Number = table.Column<int>(type: "int", nullable: false),
                     City = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -49,13 +50,13 @@ namespace ProjectOverdrive.API.Migrations
                     start_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     name_company = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    fantasy_name = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: false)
+                    fantasy_name = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     cnae = table.Column<string>(type: "varchar(7)", maxLength: 7, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    legal_nature = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    legal_nature = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IdAddress = table.Column<int>(type: "int", nullable: true),
+                    IdAddress = table.Column<int>(type: "int", nullable: false),
                     Finance = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
@@ -65,7 +66,8 @@ namespace ProjectOverdrive.API.Migrations
                         name: "FK_company_Address_IdAddress",
                         column: x => x.IdAddress,
                         principalTable: "Address",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -81,7 +83,7 @@ namespace ProjectOverdrive.API.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     number_contact = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
