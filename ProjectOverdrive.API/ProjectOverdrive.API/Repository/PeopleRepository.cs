@@ -18,14 +18,14 @@ namespace ProjectOverdrive.API.Repository
             _dbContext = apiDbContext;
             _mapper = mapper;
         }
-        public async Task<List<PeopleResponse>> SearchPeople()
+        public async Task<IEnumerable<PeopleResponse>> SearchPeople()
         {
-            List<People> peoples = await _dbContext.People
-                .Include(p => p.Company)
-                    .ThenInclude(a => a.Address)
-                .ToListAsync();
+            List<People> people = await _dbContext.People
+               //.Include(c => c.Company)
+                    //.ThenInclude(a => a.Address)
+               .ToListAsync();
 
-            return _mapper.Map<List<PeopleResponse>>(peoples);
+            return _mapper.Map<List<PeopleResponse>>(people);
         }
 
         public async Task<PeopleResponse> SearchPeopleByName(string name)
@@ -48,7 +48,7 @@ namespace ProjectOverdrive.API.Repository
                 .Where(c => c.Id == idCompany)
                 .FirstOrDefaultAsync();
 
-            if(people.Status == Enum.Status.Active || company.Status == Enum.Status.Active)
+            if(people.Status == Enum.Status.Active && company.Status == Enum.Status.Active)
             {
                 people.Company = company;
                 _dbContext.People.Update(people);
@@ -57,16 +57,37 @@ namespace ProjectOverdrive.API.Repository
             }
             else
             {
-                return _mapper.Map<PeopleRequest>(people);
+                throw new Exception("Para cadastrar, a pessoa e a empresa devem estar ativas!");
             }
           
+        }
+
+        public async Task<PeopleRequest> RemovePeopleInCompany(int idPeople)
+        {
+            People people = await _dbContext.People
+                .Where(p => p.Id == idPeople)
+                .FirstOrDefaultAsync();
+
+            people.IdCompany = null;
+            people.Company = null;
+
+            _dbContext.People.Update(people);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<PeopleRequest>(people);
         }
 
         public async Task<PeopleRequest> AddPeople(PeopleRequest vo)
         {
             People people = _mapper.Map<People>(vo);
+            var checkCpf = await _dbContext.People
+                .Where(p => p.Cpf == people.Cpf)
+                .FirstOrDefaultAsync();
+            var checkContact = await _dbContext.People
+                .Where(p => p.NumberContact == people.NumberContact)
+                .FirstOrDefaultAsync();
 
-            if (vo.UserName is null || vo.UserName == "string" ||  vo.NumberContact is null || vo.NumberContact == "string" ||
+            if (vo.UserName is null ||  vo.NumberContact is null ||
                 vo.UserName.Trim() ==  ""  || vo.NumberContact.Trim() == "")
             {
                 people.Status = Enum.Status.Pending;
@@ -76,16 +97,30 @@ namespace ProjectOverdrive.API.Repository
                 people.Status = Enum.Status.Active;
             }
 
-            await _dbContext.People.AddAsync(people);
-            await _dbContext.SaveChangesAsync();
-            return _mapper.Map<PeopleRequest>(people);
+            if(checkCpf == null && checkContact == null)
+            {
+                await _dbContext.People.AddAsync(people);
+                await _dbContext.SaveChangesAsync();
+                return _mapper.Map<PeopleRequest>(people);
+            }
+            else
+            {
+                throw new Exception("O Cpf ou Numero de Contato, já existem no banco de dados");
+            }
+           
         }
 
         public async Task<PeopleUpdateRequest> UpdatePeople(PeopleUpdateRequest vo)
         {
             People people = _mapper.Map<People>(vo);
+            var checkCpf = await _dbContext.People
+                .Where(p => p.Cpf == people.Cpf)
+                .FirstOrDefaultAsync();
+            var checkContact = await _dbContext.People
+                .Where(p => p.NumberContact == people.NumberContact)
+                .FirstOrDefaultAsync();
 
-            if (vo.UserName is null || vo.UserName == "string" || vo.NumberContact is null || vo.NumberContact == "string" ||
+            if (vo.UserName is null || vo.NumberContact is null ||
                 vo.UserName.Trim() == "" || vo.NumberContact.Trim() == "")
             {
                 people.Status = Enum.Status.Pending;
@@ -95,9 +130,16 @@ namespace ProjectOverdrive.API.Repository
                 people.Status = Enum.Status.Active;
             }
 
-            _dbContext.People.Update(people);
-            await _dbContext.SaveChangesAsync();
-            return _mapper.Map<PeopleUpdateRequest>(people);
+            if (checkCpf == null && checkContact == null)
+            {
+                _dbContext.People.Update(people);
+                await _dbContext.SaveChangesAsync();
+                return _mapper.Map<PeopleUpdateRequest>(people);
+            }
+            else
+            {
+                throw new Exception("O Cpf ou Numero de Contato, já existem no banco de dados");
+            }
         }
 
         public async Task<bool> DeletePeople(int id)

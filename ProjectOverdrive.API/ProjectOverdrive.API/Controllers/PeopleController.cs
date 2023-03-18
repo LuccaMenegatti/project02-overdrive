@@ -15,14 +15,14 @@ namespace ProjectOverdrive.API.Controllers
         private readonly IPeopleRepository _peopleRepository;
         public PeopleController(IPeopleRepository peopleRepository)
         {
-            _peopleRepository = peopleRepository;
+            _peopleRepository = peopleRepository ?? throw new ArgumentException(nameof(Repository)); 
         }
 
         [HttpGet("SearchPeople")]
-        public async Task<ActionResult<List<PeopleResponse>>> SearchPeople()
+        public async Task<ActionResult<IEnumerable<People>>> SearchPeople()
         {
-            var people = await _peopleRepository.SearchPeople();
-            return Ok(people);
+            var peoples = await _peopleRepository.SearchPeople();
+            return Ok(peoples);
         }
 
 
@@ -39,6 +39,14 @@ namespace ProjectOverdrive.API.Controllers
         {
             if (idPeople == null && idCompany == null) return BadRequest();
             var people = await _peopleRepository.AddPeopleInCompany(idPeople, idCompany);
+            return Ok(people);
+        }
+
+        [HttpPut("RemovePeopleInCompany")]
+        public async Task<ActionResult<PeopleRequest>> RemovePeopleInCompany(int idPeople)
+        {
+            if (idPeople == null) return BadRequest();
+            var people = await _peopleRepository.RemovePeopleInCompany(idPeople);
             return Ok(people);
         }
 

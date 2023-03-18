@@ -48,6 +48,6 @@ namespace ProjectOverdrive.API.Models
         [Column("Finance")]
         [Required]
         public double Finance { get; set; }
-        public IEnumerable<People> peoples { get; set; }
+        public IEnumerable<People> Peoples { get; set; }
     }
 }

@@ -22,11 +22,10 @@ namespace ProjectOverdrive.API.Repository
         public async Task<List<CompanyResponse>> SearchCompany()
         {
             List<Company> company = await _dbContext.Company
-               .Include(a => a.Address)
-              
-               .ToListAsync();
+                .Include(a => a.Address)
+                .ToListAsync();
 
-            return _mapper.Map<List<CompanyResponse>>(company);
+             return _mapper.Map<List<CompanyResponse>>(company); 
         }
 
         public async Task<CompanyResponse> SearchCompanyByCnpj(string cnpj)
@@ -58,7 +57,7 @@ namespace ProjectOverdrive.API.Repository
             var company = await _dbContext.Company
                 .Where(c => c.Id == id)
                 .FirstOrDefaultAsync();
-            company.peoples = peoples;
+            company.Peoples = peoples;
 
             return _mapper.Map<CompanyResponse>(company);
         }
@@ -66,9 +65,13 @@ namespace ProjectOverdrive.API.Repository
         public async Task<CompanyRequest> AddCompany(CompanyRequest vo)
         {
             Company company = _mapper.Map<Company>(vo);
+            var checkCnpj = await _dbContext.Company
+                .Where(p => p.Cnpj == company.Cnpj)
+                .Where(p => p.Cnpj == company.Cnpj)
+                .FirstOrDefaultAsync();
 
-            if (vo.FantasyName is null || vo.FantasyName == "string" ||
-                vo.LegalNature is null || vo.LegalNature == "string" ||
+
+            if (vo.FantasyName is null || vo.LegalNature is null || 
                 vo.FantasyName.Trim() == "" || vo.LegalNature.Trim() == "")    
             {
                 company.Status = Enum.Status.Pending;
@@ -78,21 +81,28 @@ namespace ProjectOverdrive.API.Repository
                 company.Status = Enum.Status.Active;
             }
 
-            var addressContexto = await _dbContext.Address
-                .Where(a => a.Cep == vo.Address.Cep && a.Number == vo.Address.Number)
-                .FirstOrDefaultAsync();
+            if (checkCnpj == null)
+            {
+                await _dbContext.Company.AddAsync(company);
+                await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Company.AddAsync(company);
-            await _dbContext.SaveChangesAsync();
-
-            return _mapper.Map<CompanyRequest>(company); 
+                return _mapper.Map<CompanyRequest>(company); ;
+            }
+            else
+            {
+                throw new Exception("Esse Cnpj já existe no banco de dados");
+            }   
         }
 
         public async Task<CompanyUpdateRequest> UpdateCompany(CompanyUpdateRequest vo)
         {
             Company company = _mapper.Map<Company>(vo);
-            if (vo.FantasyName is null || vo.FantasyName == "string" ||
-                vo.LegalNature is null || vo.LegalNature == "string" ||
+            var checkCnpj = await _dbContext.Company
+                .Where(p => p.Cnpj == company.Cnpj)
+                .Where(p => p.Cnpj == company.Cnpj)
+                .FirstOrDefaultAsync();
+
+            if (vo.FantasyName is null || vo.LegalNature is null ||
                 vo.FantasyName.Trim() == "" || vo.LegalNature.Trim() == "")
             {
                 company.Status = Enum.Status.Pending;
@@ -102,9 +112,16 @@ namespace ProjectOverdrive.API.Repository
                 company.Status = Enum.Status.Active;
             }
 
-            _dbContext.Company.Update(company);
-            await _dbContext.SaveChangesAsync();
-            return _mapper.Map<CompanyUpdateRequest>(company);
+            if (checkCnpj == null)
+            {
+                _dbContext.Company.Update(company);
+                await _dbContext.SaveChangesAsync();
+                return _mapper.Map<CompanyUpdateRequest>(company);
+            }
+            else
+            {
+                throw new Exception("Esse Cnpj já existe no banco de dados");
+            }  
         }
 
         public async Task<bool> DeleteCompany(int id)
@@ -112,9 +129,13 @@ namespace ProjectOverdrive.API.Repository
             try
             {
                 Company company = await _dbContext.Company.Where(c => c.Id == id)
-                .FirstOrDefaultAsync() ?? new Company();
+                    .FirstOrDefaultAsync() ?? new Company();
+                Address address = await _dbContext.Address
+                    .Where(a => a.Id == company.IdAddress)
+                    .FirstOrDefaultAsync();
                 if (company == null) return false;
                 _dbContext.Company.Remove(company);
+                _dbContext.Address.Remove(address);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
