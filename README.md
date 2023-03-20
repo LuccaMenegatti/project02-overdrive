@@ -1,7 +1,8 @@
 # _Project 02 Overdrive - Lucca Menegatti_
 
-welcome, the purpose of this project is to create an open API (without authentication) for registering companies and people, linking the two entities. 
-- technologies used::
+Welcome, the purpose of this project is to create an open API (without authentication) for registering companies and people, linking the two entities. 
+
+- Technologies used::
 - .NET 6
 - C#
 - Entity Framework
