@@ -12,6 +12,7 @@ namespace ProjectOverdrive.API.Repository.Interfaces
         Task<PeopleRequest> RemovePeopleInCompany(int idPeople);
         Task<PeopleRequest> AddPeople(PeopleRequest vo);
         Task<PeopleUpdateRequest> UpdatePeople(PeopleUpdateRequest vo);
+        Task<PeopleUpdateRequest> ActivePeople(int id);
         Task<PeopleUpdateRequest> InactivePeople(int id);
         Task<bool> DeletePeople(int id);
     }

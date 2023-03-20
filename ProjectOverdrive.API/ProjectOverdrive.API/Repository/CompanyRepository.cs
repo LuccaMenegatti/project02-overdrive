@@ -132,6 +132,8 @@ namespace ProjectOverdrive.API.Repository
 
             if (company == null) throw new Exception("Essa empresa não existe no banco de dados");
 
+            if (company.Status == Enum.Status.Inactive) throw new Exception("Essa empresa já esta inativa.");
+
             var checkPeople = await _dbContext.People
                 .Where(p => p.IdCompany == id)
                 .FirstOrDefaultAsync();
@@ -150,7 +152,37 @@ namespace ProjectOverdrive.API.Repository
 
         }
 
-            public async Task<bool> DeleteCompany(int id)
+        public async Task<CompanyUpdateRequest> ActiveCompany (int id)
+        {
+            Company company = await _dbContext.Company.Where(c => c.Id == id)
+                  .FirstOrDefaultAsync() ?? new Company();
+
+            if (company == null) throw new Exception("Essa empresa não existe no banco de dados");
+
+            if(company.Status == Enum.Status.Pending) throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+
+            if (company.FantasyName is null || company.LegalNature is null ||
+                company.FantasyName.Trim() == "" || company.LegalNature.Trim() == "")
+            {
+                throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+            }
+            else
+            {
+                if (company.Status == Enum.Status.Inactive)
+                {
+                    company.Status = Enum.Status.Active;
+                    _dbContext.Company.Update(company);
+                    await _dbContext.SaveChangesAsync();
+                    return _mapper.Map<CompanyUpdateRequest>(company);
+                }
+                else
+                {
+                    throw new Exception("Essa empresa já esta ativa.");
+                }
+            }
+        }
+
+        public async Task<bool> DeleteCompany(int id)
         {  
                 Company company = await _dbContext.Company.Where(c => c.Id == id)
                    .FirstOrDefaultAsync() ?? new Company();

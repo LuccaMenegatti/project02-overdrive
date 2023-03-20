@@ -144,6 +144,36 @@ namespace ProjectOverdrive.API.Repository
             }
         }
 
+        public async Task<PeopleUpdateRequest> ActivePeople(int id)
+        {
+            People people = await _dbContext.People.Where(c => c.Id == id)
+                  .FirstOrDefaultAsync() ?? new People();
+
+            if (people == null) throw new Exception("Essa pessoa não existe no banco de dados");
+
+            if (people.Status == Enum.Status.Pending) throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+
+            if (people.UserName is null || people.NumberContact is null ||
+                people.UserName.Trim() == "" || people.NumberContact.Trim() == "")
+            {
+                throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+            }
+            else
+            {
+                if (people.Status == Enum.Status.Inactive)
+                {
+                    people.Status = Enum.Status.Active;
+                    _dbContext.People.Update(people);
+                    await _dbContext.SaveChangesAsync();
+                    return _mapper.Map<PeopleUpdateRequest>(people);
+                }
+                else
+                {
+                    throw new Exception("Essa pessoa já esta ativa.");
+                }
+            }
+        }
+
         public async Task<PeopleUpdateRequest> InactivePeople(int id)
         {
             People people = await _dbContext.People.Where(p => p.Id == id)

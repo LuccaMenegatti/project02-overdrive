@@ -64,6 +64,14 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(companyUpdate);
         }
 
+        [HttpPut("ActiveCompany")]
+        public async Task<ActionResult<CompanyUpdateRequest>> ActiveCompany(int id)
+        {
+            if (id == null) return BadRequest();
+            var companyUpdate = await _companyRepository.ActiveCompany(id);
+            return Ok(companyUpdate);
+        }
+
         [HttpPut("InactiveCompany")]
         public async Task<ActionResult<CompanyUpdateRequest>> InactiveCompany(int id)
         {
