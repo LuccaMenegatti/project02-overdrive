@@ -66,6 +66,14 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(peopleUpdate);
         }
 
+        [HttpPut("InactivePeople")]
+        public async Task<ActionResult<PeopleUpdateRequest>> InactivePeople(int id)
+        {
+            if (id == null) return BadRequest();
+            var peopleUpdate = await _peopleRepository.InactivePeople(id);
+            return Ok(peopleUpdate);
+        }
+
         [HttpDelete("DeletePeople/{id}")]
         public async Task<ActionResult<People>> DeletePeople(int id)
         {

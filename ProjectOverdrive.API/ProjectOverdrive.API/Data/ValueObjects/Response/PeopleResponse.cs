@@ -14,7 +14,7 @@ namespace ProjectOverdrive.API.Data.ValueObjects.Response
         public string UserName { get; set; }
         public Status Status { get; set; }
         public int? IdCompany { get; set; }
-        public virtual Company Company { get; set; }
+        public virtual SearchCompanyInPeopleResponse Company { get; set; }
 
     }
 }

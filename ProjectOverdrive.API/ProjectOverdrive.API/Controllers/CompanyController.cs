@@ -18,7 +18,7 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpGet("SearchCompany")]
-        public async Task<ActionResult<List<Company>>> SearchCompany()
+        public async Task<ActionResult<List<SearchCompanyResponse>>> SearchCompany()
         {
             var company = await _companyRepository.SearchCompany();
             return Ok(company);
@@ -26,7 +26,7 @@ namespace ProjectOverdrive.API.Controllers
 
 
         [HttpGet("SearchCompanyByCnpj/{cnpj}")]
-        public async Task<ActionResult<List<CompanyResponse>>> SearchCompanyByCnpj(string cnpj)
+        public async Task<ActionResult<List<SearchCompanyResponse>>> SearchCompanyByCnpj(string cnpj)
         {
             var company = await _companyRepository.SearchCompanyByCnpj(cnpj);
             if (company == null) return NotFound();
@@ -34,7 +34,7 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpGet("SearchCompanyByName/{name}")]
-        public async Task<ActionResult<List<CompanyResponse>>> SearchCompanyByName(string name)
+        public async Task<ActionResult<List<SearchCompanyResponse>>> SearchCompanyByName(string name)
         {
             var company = await _companyRepository.SearchCompanyByName(name);
             if (company == null) return NotFound();
@@ -61,6 +61,14 @@ namespace ProjectOverdrive.API.Controllers
         {
             if (vo == null) return BadRequest();
             var companyUpdate = await _companyRepository.UpdateCompany(vo);
+            return Ok(companyUpdate);
+        }
+
+        [HttpPut("InactiveCompany")]
+        public async Task<ActionResult<CompanyUpdateRequest>> InactiveCompany(int id)
+        {
+            if (id == null) return BadRequest();
+            var companyUpdate = await _companyRepository.InactiveCompany(id);
             return Ok(companyUpdate);
         }
 

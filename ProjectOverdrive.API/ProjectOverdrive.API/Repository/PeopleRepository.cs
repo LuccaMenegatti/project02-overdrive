@@ -5,7 +5,9 @@ using ProjectOverdrive.API.Data.ValueObjects.Request;
 using ProjectOverdrive.API.Data.ValueObjects.Response;
 using ProjectOverdrive.API.Models;
 using ProjectOverdrive.API.Repository.Interfaces;
+using System.Net;
 using System.Xml.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ProjectOverdrive.API.Repository
 {
@@ -21,8 +23,8 @@ namespace ProjectOverdrive.API.Repository
         public async Task<IEnumerable<PeopleResponse>> SearchPeople()
         {
             List<People> people = await _dbContext.People
-               //.Include(c => c.Company)
-                    //.ThenInclude(a => a.Address)
+               .Include(c => c.Company)
+                    .ThenInclude(a => a.Address)
                .ToListAsync();
 
             return _mapper.Map<List<PeopleResponse>>(people);
@@ -142,24 +144,45 @@ namespace ProjectOverdrive.API.Repository
             }
         }
 
+        public async Task<PeopleUpdateRequest> InactivePeople(int id)
+        {
+            People people = await _dbContext.People.Where(p => p.Id == id)
+                .FirstOrDefaultAsync() ?? new People();
+            if (people == null) throw new Exception("Essa pessoa não existe no banco de dados");
+            if (people.IdCompany == null)
+            {
+                people.Status = Enum.Status.Inactive;
+                _dbContext.People.Update(people);
+                await _dbContext.SaveChangesAsync();
+                return _mapper.Map<PeopleUpdateRequest>(people);
+            }
+            else
+            {
+                throw new Exception("Impossivel inativar, essa pessoa pertence a uma empresa.");
+            }
+        }
+
+
+
+
+
         public async Task<bool> DeletePeople(int id)
         {
-            try
-            {
+            
                 People people = await _dbContext.People.Where(p => p.Id == id)
                 .FirstOrDefaultAsync() ?? new People();
                 if (people == null) return false;
-                _dbContext.People.Remove(people);
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
 
-        }
-
-        
+                if (people.IdCompany == null)
+                    {
+                        _dbContext.People.Remove(people);
+                        await _dbContext.SaveChangesAsync();
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception("Impossivel excluir, essa pessoa pertence a uma empresa.");
+                    }
+                }   
     }
 }

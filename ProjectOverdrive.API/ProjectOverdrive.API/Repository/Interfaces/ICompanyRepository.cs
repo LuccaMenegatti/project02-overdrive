@@ -7,12 +7,13 @@ namespace ProjectOverdrive.API.Repository.Interfaces
 {
     public interface ICompanyRepository
     {
-        Task<List<CompanyResponse>> SearchCompany();
-        Task<CompanyResponse> SearchCompanyByCnpj(string cnpj);
-        Task<CompanyResponse> SearchCompanyByName(string name);
+        Task<List<SearchCompanyResponse>> SearchCompany();
+        Task<SearchCompanyResponse> SearchCompanyByCnpj(string cnpj);
+        Task<SearchCompanyResponse> SearchCompanyByName(string name);
         Task<CompanyResponse> SearchPeopleInCompany(int id);
         Task<CompanyRequest> AddCompany(CompanyRequest vo);
         Task<CompanyUpdateRequest> UpdateCompany(CompanyUpdateRequest vo);
+        Task<CompanyUpdateRequest> InactiveCompany(int id);
         Task<bool> DeleteCompany(int id);
     }
 }
