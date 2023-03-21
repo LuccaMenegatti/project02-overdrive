@@ -35,23 +35,23 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpPut("AddPeopleInCompany")]
-        public async Task<ActionResult<PeopleRequest>> AddPeopleInCompany(int idPeople, int idCompany)
+        public async Task<ActionResult<PeopleResponse>> AddPeopleInCompany(int idPeople, int idCompany)
         {
-            if (idPeople == null && idCompany == null) return BadRequest();
+            if (idPeople == 0 && idCompany == 0) return BadRequest();
             var people = await _peopleRepository.AddPeopleInCompany(idPeople, idCompany);
             return Ok(people);
         }
 
         [HttpPut("RemovePeopleInCompany")]
-        public async Task<ActionResult<PeopleRequest>> RemovePeopleInCompany(int idPeople)
+        public async Task<ActionResult<PeopleResponse>> RemovePeopleInCompany(int idPeople)
         {
-            if (idPeople == null) return BadRequest();
+            if (idPeople == 0) return BadRequest();
             var people = await _peopleRepository.RemovePeopleInCompany(idPeople);
             return Ok(people);
         }
 
         [HttpPost]
-        public async Task<ActionResult<PeopleRequest>> AddPeople([FromBody] PeopleRequest vo)
+        public async Task<ActionResult<PeopleResponse>> AddPeople([FromBody] PeopleRequest vo)
         {
             if (vo == null) return BadRequest(); 
             var peopleAdd =  await _peopleRepository.AddPeople(vo);
@@ -59,7 +59,7 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpPut("UpdatePeople")]
-        public async Task<ActionResult<PeopleUpdateRequest>> UpdatePeople([FromBody] PeopleUpdateRequest vo)
+        public async Task<ActionResult<PeopleResponse>> UpdatePeople([FromBody] PeopleUpdateRequest vo)
         {
             if (vo == null) return BadRequest();
             var peopleUpdate = await _peopleRepository.UpdatePeople(vo);
@@ -67,17 +67,17 @@ namespace ProjectOverdrive.API.Controllers
         }
 
         [HttpPut("InactivePeople")]
-        public async Task<ActionResult<PeopleUpdateRequest>> InactivePeople(int id)
+        public async Task<ActionResult<PeopleResponse>> InactivePeople(int id)
         {
-            if (id == null) return BadRequest();
+            if (id == 0) return BadRequest();
             var peopleUpdate = await _peopleRepository.InactivePeople(id);
             return Ok(peopleUpdate);
         }
 
         [HttpPut("ActivePeople")]
-        public async Task<ActionResult<PeopleUpdateRequest>> ActivePeople(int id)
+        public async Task<ActionResult<PeopleResponse>> ActivePeople(int id)
         {
-            if (id == null) return BadRequest();
+            if (id == 0) return BadRequest();
             var peopleUpdate = await _peopleRepository.ActivePeople(id);
             return Ok(peopleUpdate);
         }

@@ -10,11 +10,11 @@ namespace ProjectOverdrive.API.Repository.Interfaces
         Task<List<SearchCompanyResponse>> SearchCompany();
         Task<SearchCompanyResponse> SearchCompanyByCnpj(string cnpj);
         Task<SearchCompanyResponse> SearchCompanyByName(string name);
-        Task<CompanyResponse> SearchPeopleInCompany(int id);
-        Task<CompanyRequest> AddCompany(CompanyRequest vo);
-        Task<CompanyUpdateRequest> UpdateCompany(CompanyUpdateRequest vo);
-        Task<CompanyUpdateRequest> ActiveCompany(int id);
-        Task<CompanyUpdateRequest> InactiveCompany(int id);
+        Task<CompanyOffAddressResponse> SearchPeopleInCompany(int id);
+        Task<SearchCompanyResponse> AddCompany(CompanyRequest vo);
+        Task<SearchCompanyResponse> UpdateCompany(CompanyUpdateRequest vo);
+        Task<CompanyOffAddressAndPeopleResponse> ActiveCompany(int id);
+        Task<CompanyOffAddressAndPeopleResponse> InactiveCompany(int id);
         Task<bool> DeleteCompany(int id);
     }
 }

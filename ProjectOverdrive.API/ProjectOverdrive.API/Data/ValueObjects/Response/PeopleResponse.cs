@@ -12,7 +12,7 @@ namespace ProjectOverdrive.API.Data.ValueObjects.Response
         public string Cpf { get; set; }
         public string NumberContact { get; set; }
         public string UserName { get; set; }
-        public Status Status { get; set; }
+        public string Status { get; set; }
         public int? IdCompany { get; set; }
         public virtual SearchCompanyInPeopleResponse Company { get; set; }
 

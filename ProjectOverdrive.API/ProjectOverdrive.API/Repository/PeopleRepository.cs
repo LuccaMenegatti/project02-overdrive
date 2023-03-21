@@ -41,7 +41,7 @@ namespace ProjectOverdrive.API.Repository
             return _mapper.Map<PeopleResponse>(people);
         }
 
-        public async Task<PeopleRequest> AddPeopleInCompany(int idPeople, int idCompany)
+        public async Task<PeopleResponse> AddPeopleInCompany(int idPeople, int idCompany)
         {
             People people = await _dbContext.People
                 .Where(p => p.Id == idPeople)
@@ -55,7 +55,7 @@ namespace ProjectOverdrive.API.Repository
                 people.Company = company;
                 _dbContext.People.Update(people);
                 await _dbContext.SaveChangesAsync();
-                return _mapper.Map<PeopleRequest>(people);
+                return _mapper.Map<PeopleResponse>(people);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace ProjectOverdrive.API.Repository
           
         }
 
-        public async Task<PeopleRequest> RemovePeopleInCompany(int idPeople)
+        public async Task<PeopleResponse> RemovePeopleInCompany(int idPeople)
         {
             People people = await _dbContext.People
                 .Where(p => p.Id == idPeople)
@@ -76,10 +76,10 @@ namespace ProjectOverdrive.API.Repository
             _dbContext.People.Update(people);
             await _dbContext.SaveChangesAsync();
 
-            return _mapper.Map<PeopleRequest>(people);
+            return _mapper.Map<PeopleResponse>(people);
         }
 
-        public async Task<PeopleRequest> AddPeople(PeopleRequest vo)
+        public async Task<PeopleResponse> AddPeople(PeopleRequest vo)
         {
             People people = _mapper.Map<People>(vo);
             var checkCpf = await _dbContext.People
@@ -103,7 +103,7 @@ namespace ProjectOverdrive.API.Repository
             {
                 await _dbContext.People.AddAsync(people);
                 await _dbContext.SaveChangesAsync();
-                return _mapper.Map<PeopleRequest>(people);
+                return _mapper.Map<PeopleResponse>(people);
             }
             else
             {
@@ -112,39 +112,31 @@ namespace ProjectOverdrive.API.Repository
            
         }
 
-        public async Task<PeopleUpdateRequest> UpdatePeople(PeopleUpdateRequest vo)
+        public async Task<PeopleResponse> UpdatePeople(PeopleUpdateRequest vo)
         {
             People people = _mapper.Map<People>(vo);
-            var checkCpf = await _dbContext.People
-                .Where(p => p.Cpf == people.Cpf)
-                .FirstOrDefaultAsync();
-            var checkContact = await _dbContext.People
-                .Where(p => p.NumberContact == people.NumberContact)
-                .FirstOrDefaultAsync();
+            People dbpeople = await _dbContext.People
+               .AsNoTracking()
+               .Where(c => c.Id == people.Id)
+               .FirstOrDefaultAsync();
 
-            if (vo.UserName is null || vo.NumberContact is null ||
-                vo.UserName.Trim() == "" || vo.NumberContact.Trim() == "")
-            {
-                people.Status = Enum.Status.Pending;
-            }
-            else
-            {
-                people.Status = Enum.Status.Active;
-            }
+            people.Cpf = dbpeople.Cpf;
 
-            if (checkCpf == null && checkContact == null)
-            {
-                _dbContext.People.Update(people);
-                await _dbContext.SaveChangesAsync();
-                return _mapper.Map<PeopleUpdateRequest>(people);
-            }
-            else
-            {
-                throw new Exception("O Cpf ou Numero de Contato, já existem no banco de dados");
-            }
+            var status =
+                people.Cpf != null &&
+                people.Name != null &&
+                people.NumberContact != null &&
+                people.UserName != null;
+
+            if (status) people.Status = Enum.Status.Active;
+            else people.Status = Enum.Status.Pending;
+
+            _dbContext.People.Update(people);
+            await _dbContext.SaveChangesAsync();
+            return _mapper.Map<PeopleResponse>(people);
         }
 
-        public async Task<PeopleUpdateRequest> ActivePeople(int id)
+        public async Task<PeopleResponse> ActivePeople(int id)
         {
             People people = await _dbContext.People.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new People();
@@ -165,7 +157,7 @@ namespace ProjectOverdrive.API.Repository
                     people.Status = Enum.Status.Active;
                     _dbContext.People.Update(people);
                     await _dbContext.SaveChangesAsync();
-                    return _mapper.Map<PeopleUpdateRequest>(people);
+                    return _mapper.Map<PeopleResponse>(people);
                 }
                 else
                 {
@@ -174,7 +166,7 @@ namespace ProjectOverdrive.API.Repository
             }
         }
 
-        public async Task<PeopleUpdateRequest> InactivePeople(int id)
+        public async Task<PeopleResponse> InactivePeople(int id)
         {
             People people = await _dbContext.People.Where(p => p.Id == id)
                 .FirstOrDefaultAsync() ?? new People();
@@ -184,7 +176,7 @@ namespace ProjectOverdrive.API.Repository
                 people.Status = Enum.Status.Inactive;
                 _dbContext.People.Update(people);
                 await _dbContext.SaveChangesAsync();
-                return _mapper.Map<PeopleUpdateRequest>(people);
+                return _mapper.Map<PeopleResponse>(people);
             }
             else
             {

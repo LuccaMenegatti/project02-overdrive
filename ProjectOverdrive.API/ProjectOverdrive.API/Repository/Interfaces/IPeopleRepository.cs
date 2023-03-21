@@ -8,12 +8,12 @@ namespace ProjectOverdrive.API.Repository.Interfaces
     {
         Task<IEnumerable<PeopleResponse>> SearchPeople();
         Task<PeopleResponse> SearchPeopleByName(string name);
-        Task<PeopleRequest> AddPeopleInCompany(int idPeople, int idCompany);
-        Task<PeopleRequest> RemovePeopleInCompany(int idPeople);
-        Task<PeopleRequest> AddPeople(PeopleRequest vo);
-        Task<PeopleUpdateRequest> UpdatePeople(PeopleUpdateRequest vo);
-        Task<PeopleUpdateRequest> ActivePeople(int id);
-        Task<PeopleUpdateRequest> InactivePeople(int id);
+        Task<PeopleResponse> AddPeopleInCompany(int idPeople, int idCompany);
+        Task<PeopleResponse> RemovePeopleInCompany(int idPeople);
+        Task<PeopleResponse> AddPeople(PeopleRequest vo);
+        Task<PeopleResponse> UpdatePeople(PeopleUpdateRequest vo);
+        Task<PeopleResponse> ActivePeople(int id);
+        Task<PeopleResponse> InactivePeople(int id);
         Task<bool> DeletePeople(int id);
     }
 }

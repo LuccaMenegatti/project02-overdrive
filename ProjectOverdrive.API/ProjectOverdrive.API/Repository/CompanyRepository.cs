@@ -49,7 +49,7 @@ namespace ProjectOverdrive.API.Repository
             return _mapper.Map<SearchCompanyResponse>(company);
         }
 
-        public async Task<CompanyResponse> SearchPeopleInCompany(int id)
+        public async Task<CompanyOffAddressResponse> SearchPeopleInCompany(int id)
         {
             List<People> peoples = await _dbContext.People
                 .Where(p => p.Company.Id == id)
@@ -60,20 +60,28 @@ namespace ProjectOverdrive.API.Repository
                 .FirstOrDefaultAsync();
             company.Peoples = peoples;
 
-            return _mapper.Map<CompanyResponse>(company);
+            return _mapper.Map<CompanyOffAddressResponse>(company);
         }
 
-        public async Task<CompanyRequest> AddCompany(CompanyRequest vo)
+        public async Task<SearchCompanyResponse> AddCompany(CompanyRequest vo)
         {
             Company company = _mapper.Map<Company>(vo);
             var checkCnpj = await _dbContext.Company
                 .Where(p => p.Cnpj == company.Cnpj)
-                .Where(p => p.Cnpj == company.Cnpj)
                 .FirstOrDefaultAsync();
 
 
-            if (vo.FantasyName is null || vo.LegalNature is null || 
-                vo.FantasyName.Trim() == "" || vo.LegalNature.Trim() == "")    
+            if (vo.FantasyName is null ||
+                vo.LegalNature is null ||
+                vo.FantasyName.Trim() == "" ||
+                vo.LegalNature.Trim() == "" ||
+                vo.Address is null ||
+                vo.Address.Cep is null ||
+                vo.Address.City is null ||
+                vo.Address.Contact is null ||
+                vo.Address.District is null ||
+                vo.Address.Number == 0 ||
+                vo.Address.Street is null)
             {
                 company.Status = Enum.Status.Pending;
             }
@@ -87,7 +95,7 @@ namespace ProjectOverdrive.API.Repository
                 await _dbContext.Company.AddAsync(company);
                 await _dbContext.SaveChangesAsync();
 
-                return _mapper.Map<CompanyRequest>(company); 
+                return _mapper.Map<SearchCompanyResponse>(company); 
             }
             else
             {
@@ -95,37 +103,42 @@ namespace ProjectOverdrive.API.Repository
             }   
         }
 
-        public async Task<CompanyUpdateRequest> UpdateCompany(CompanyUpdateRequest vo)
+        public async Task<SearchCompanyResponse> UpdateCompany(CompanyUpdateRequest vo)
         {
             Company company = _mapper.Map<Company>(vo);
-            var checkCnpj = await _dbContext.Company
-                .Where(p => p.Cnpj == company.Cnpj)
-                .Where(p => p.Cnpj == company.Cnpj)
+            Company dbCompany = await _dbContext.Company
+                .AsNoTracking()
+                .Where(c => c.Id == company.Id)
                 .FirstOrDefaultAsync();
 
-            if (vo.FantasyName is null || vo.LegalNature is null ||
-                vo.FantasyName.Trim() == "" || vo.LegalNature.Trim() == "")
-            {
-                company.Status = Enum.Status.Pending;
-            }
-            else
-            {
-                company.Status = Enum.Status.Active;
-            }
+            company.Cnpj = dbCompany.Cnpj;
+            company.StartDate = dbCompany.StartDate;
 
-            if (checkCnpj == null)
-            {
+            var status =
+                company.Cnpj != null &&
+                company.StartDate != null &&
+                company.CompanyName != null &&
+                company.FantasyName != null &&
+                company.Cnae != null &&
+                company.LegalNature != null &&
+                company.Finance != 0 &&
+                company.Address != null &&
+                company.Address.Cep != null &&
+                company.Address.City != null &&
+                company.Address.Contact != null &&
+                company.Address.District != null &&
+                company.Address.Number != 0 &&
+                company.Address.Street != null;
+
+            if (status) company.Status = Enum.Status.Active;
+            else company.Status = Enum.Status.Pending;
+
                 _dbContext.Company.Update(company);
                 await _dbContext.SaveChangesAsync();
-                return _mapper.Map<CompanyUpdateRequest>(company);
-            }
-            else
-            {
-                throw new Exception("Esse Cnpj já existe no banco de dados");
-            }  
+                return _mapper.Map<SearchCompanyResponse>(company);
         }
 
-        public async Task<CompanyUpdateRequest> InactiveCompany(int id)
+        public async Task<CompanyOffAddressAndPeopleResponse> InactiveCompany(int id)
         {
             Company company = await _dbContext.Company.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new Company();
@@ -143,7 +156,7 @@ namespace ProjectOverdrive.API.Repository
                 company.Status = Enum.Status.Inactive;
                 _dbContext.Company.Update(company);
                 await _dbContext.SaveChangesAsync();
-                return _mapper.Map<CompanyUpdateRequest>(company);
+                return _mapper.Map<CompanyOffAddressAndPeopleResponse>(company);
             }
             else
             {
@@ -152,7 +165,7 @@ namespace ProjectOverdrive.API.Repository
 
         }
 
-        public async Task<CompanyUpdateRequest> ActiveCompany (int id)
+        public async Task<CompanyOffAddressAndPeopleResponse> ActiveCompany (int id)
         {
             Company company = await _dbContext.Company.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new Company();
@@ -173,7 +186,7 @@ namespace ProjectOverdrive.API.Repository
                     company.Status = Enum.Status.Active;
                     _dbContext.Company.Update(company);
                     await _dbContext.SaveChangesAsync();
-                    return _mapper.Map<CompanyUpdateRequest>(company);
+                    return _mapper.Map<CompanyOffAddressAndPeopleResponse>(company);
                 }
                 else
                 {

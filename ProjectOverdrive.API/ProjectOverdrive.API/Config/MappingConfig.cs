@@ -16,6 +16,8 @@ namespace ProjectOverdrive.API.Config
                 config.CreateMap<CompanyUpdateRequest, Company>().ReverseMap();
                 config.CreateMap<SearchCompanyResponse, Company>().ReverseMap();
                 config.CreateMap<SearchCompanyInPeopleResponse, Company>().ReverseMap();
+                config.CreateMap<CompanyOffAddressResponse, Company>().ReverseMap();
+                config.CreateMap<CompanyOffAddressAndPeopleResponse, Company>().ReverseMap();
 
 
                 config.CreateMap<PeopleRequest, People>().ReverseMap();

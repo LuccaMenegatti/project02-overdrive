@@ -19,7 +19,7 @@ namespace ProjectOverdrive.API.Models
 
         [Column("start_date")]
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [Column("name_company")]
         [Required]
@@ -32,7 +32,7 @@ namespace ProjectOverdrive.API.Models
 
         [Column("cnae")]
         [Required]
-        [StringLength(7)]
+        [StringLength(50)]
         public string Cnae { get; set; }
 
         [Column("legal_nature")]
@@ -40,10 +40,10 @@ namespace ProjectOverdrive.API.Models
         public string LegalNature { get; set; }
 
         [Column("IdAddress")]
-        public int IdAddress { get; set; }
+        public int? IdAddress { get; set; }
 
         [ForeignKey("IdAddress")]
-        public Address Address { get; set;}
+        public Address? Address { get; set;}
 
         [Column("Finance")]
         [Required]

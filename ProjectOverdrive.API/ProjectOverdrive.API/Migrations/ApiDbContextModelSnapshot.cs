@@ -27,22 +27,33 @@ namespace ProjectOverdrive.API.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Cep")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Cep");
 
                     b.Property<string>("City")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("City");
 
                     b.Property<string>("Contact")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("Contact");
 
                     b.Property<string>("District")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)")
+                        .HasColumnName("District");
 
                     b.Property<int>("Number")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Number");
 
                     b.Property<string>("Street")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)")
+                        .HasColumnName("Street");
 
                     b.HasKey("Id");
 
@@ -58,8 +69,8 @@ namespace ProjectOverdrive.API.Migrations
 
                     b.Property<string>("Cnae")
                         .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("varchar(7)")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("cnae");
 
                     b.Property<string>("Cnpj")
@@ -83,7 +94,7 @@ namespace ProjectOverdrive.API.Migrations
                         .HasColumnType("double")
                         .HasColumnName("Finance");
 
-                    b.Property<int>("IdAddress")
+                    b.Property<int?>("IdAddress")
                         .HasColumnType("int")
                         .HasColumnName("IdAddress");
 
@@ -92,7 +103,8 @@ namespace ProjectOverdrive.API.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("legal_nature");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
+                        .IsRequired()
                         .HasColumnType("datetime(6)")
                         .HasColumnName("start_date");
 
@@ -157,9 +169,7 @@ namespace ProjectOverdrive.API.Migrations
                 {
                     b.HasOne("ProjectOverdrive.API.Models.Address", "Address")
                         .WithMany()
-                        .HasForeignKey("IdAddress")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdAddress");
 
                     b.Navigation("Address");
                 });
@@ -167,7 +177,7 @@ namespace ProjectOverdrive.API.Migrations
             modelBuilder.Entity("ProjectOverdrive.API.Models.People", b =>
                 {
                     b.HasOne("ProjectOverdrive.API.Models.Company", "Company")
-                        .WithMany("peoples")
+                        .WithMany("Peoples")
                         .HasForeignKey("IdCompany");
 
                     b.Navigation("Company");
@@ -175,7 +185,7 @@ namespace ProjectOverdrive.API.Migrations
 
             modelBuilder.Entity("ProjectOverdrive.API.Models.Company", b =>
                 {
-                    b.Navigation("peoples");
+                    b.Navigation("Peoples");
                 });
 #pragma warning restore 612, 618
         }
