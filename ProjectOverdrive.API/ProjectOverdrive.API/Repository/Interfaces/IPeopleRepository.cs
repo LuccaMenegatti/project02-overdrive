@@ -7,7 +7,7 @@ namespace ProjectOverdrive.API.Repository.Interfaces
     public interface IPeopleRepository
     {
         Task<IEnumerable<PeopleResponse>> SearchPeople();
-        Task<PeopleResponse> SearchPeopleByName(string name);
+        Task<List<PeopleResponse>> SearchPeopleByName(string name);
         Task<PeopleResponse> AddPeopleInCompany(int idPeople, int idCompany);
         Task<PeopleResponse> RemovePeopleInCompany(int idPeople);
         Task<PeopleResponse> AddPeople(PeopleRequest vo);

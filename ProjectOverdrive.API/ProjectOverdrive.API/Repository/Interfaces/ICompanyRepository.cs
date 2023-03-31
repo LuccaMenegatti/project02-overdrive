@@ -9,7 +9,7 @@ namespace ProjectOverdrive.API.Repository.Interfaces
     {
         Task<List<SearchCompanyResponse>> SearchCompany();
         Task<SearchCompanyResponse> SearchCompanyByCnpj(string cnpj);
-        Task<SearchCompanyResponse> SearchCompanyByName(string name);
+        Task<List<SearchCompanyResponse>> SearchCompanyByName(string name);
         Task<CompanyOffAddressResponse> SearchPeopleInCompany(int id);
         Task<SearchCompanyResponse> AddCompany(CompanyRequest vo);
         Task<SearchCompanyResponse> UpdateCompany(CompanyUpdateRequest vo);

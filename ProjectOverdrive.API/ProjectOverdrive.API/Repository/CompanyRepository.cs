@@ -39,14 +39,14 @@ namespace ProjectOverdrive.API.Repository
             return _mapper.Map<SearchCompanyResponse>(company);
         }
 
-        public async Task<SearchCompanyResponse> SearchCompanyByName(string name)
+        public async Task<List<SearchCompanyResponse>> SearchCompanyByName(string name)
         {
-            Company company = await _dbContext.Company
-                .Where(c => c.CompanyName == name)
+            List<Company> company = await _dbContext.Company
+                .Where(c => c.CompanyName.Contains(name))
                 .Include(a => a.Address)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            return _mapper.Map<SearchCompanyResponse>(company);
+            return _mapper.Map<List<SearchCompanyResponse>>(company);
         }
 
         public async Task<CompanyOffAddressResponse> SearchPeopleInCompany(int id)

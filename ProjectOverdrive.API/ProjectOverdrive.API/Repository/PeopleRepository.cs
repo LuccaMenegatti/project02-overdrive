@@ -30,15 +30,15 @@ namespace ProjectOverdrive.API.Repository
             return _mapper.Map<List<PeopleResponse>>(people);
         }
 
-        public async Task<PeopleResponse> SearchPeopleByName(string name)
+        public async Task<List<PeopleResponse>> SearchPeopleByName(string name)
         {
-            People people = await _dbContext.People
-                            .Where(p => p.Name == name)
+            List<People> people = await _dbContext.People
+                            .Where(p => p.Name.Contains(name))
                             .Include(c => c.Company)
                                 .ThenInclude(a => a.Address)
-                            .FirstOrDefaultAsync();
+                            .ToListAsync();
 
-            return _mapper.Map<PeopleResponse>(people);
+            return _mapper.Map<List<PeopleResponse>>(people);
         }
 
         public async Task<PeopleResponse> AddPeopleInCompany(int idPeople, int idCompany)

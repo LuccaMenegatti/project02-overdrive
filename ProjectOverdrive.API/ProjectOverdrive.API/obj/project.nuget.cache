@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "9LqlCam6zKZnDGzQOY0YwAp+Iw/TIu+cfpiKU3aYQKnlOp69qQT9C8PAAFGMendoi2Lr/KohVF6SFe6Y479GoQ==",
+  "dgSpecHash": "/9+uGQaEs+odENmxwgf+zMcU+Ube0sUqM6946Ad/B/LEAOrOwd1MAWuP23ZmNmHnmPcJHnILhTXm4+pUqzB6EQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\lucca\\OneDrive\\Documentos\\repositorios\\projeto02-overdrive\\ProjectOverdrive.API\\ProjectOverdrive.API\\ProjectOverdrive.API.csproj",
   "expectedPackageFiles": [
@@ -32,6 +32,7 @@
     "C:\\Users\\lucca\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.2.3\\swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
+    "C:\\Users\\lucca\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "C:\\Users\\lucca\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
