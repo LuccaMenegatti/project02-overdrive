@@ -107,7 +107,8 @@ namespace ProjectOverdrive.API.Repository
             }
             else
             {
-                throw new Exception("O Cpf ou Numero de Contato, já existem no banco de dados");
+                people = null;
+                return _mapper.Map<PeopleResponse>(people);
             }
            
         }
@@ -119,7 +120,7 @@ namespace ProjectOverdrive.API.Repository
                .AsNoTracking()
                .Where(c => c.Id == people.Id)
                .FirstOrDefaultAsync();
-
+           
             people.Cpf = dbpeople.Cpf;
 
             var status =

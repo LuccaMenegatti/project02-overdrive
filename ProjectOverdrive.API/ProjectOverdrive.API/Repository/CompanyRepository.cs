@@ -94,12 +94,12 @@ namespace ProjectOverdrive.API.Repository
             {
                 await _dbContext.Company.AddAsync(company);
                 await _dbContext.SaveChangesAsync();
-
                 return _mapper.Map<SearchCompanyResponse>(company); 
             }
             else
             {
-                throw new Exception("Esse Cnpj já existe no banco de dados");
+                company = null;
+                return _mapper.Map<SearchCompanyResponse>(company);
             }   
         }
 

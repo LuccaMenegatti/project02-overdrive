@@ -51,15 +51,10 @@ namespace ProjectOverdrive.API.Controllers
         [HttpPost]
         public async Task<ActionResult<CompanyRequest>> AddCompany([FromBody] CompanyRequest vo)
         {
-            if(vo.Cnpj.Count() > 14) 
-            { 
-                ModelState.AddModelError("cnpj", "O cnpj tem o tamanho maximo de 14 Caracteres");
-                return BadRequest(ModelState);
-            }
-
             if (vo == null) return BadRequest();
             var companyAdd = await _companyRepository.AddCompany(vo);
-            return Ok(companyAdd);
+            if (companyAdd != null) return Ok(companyAdd);
+            else return BadRequest("Esse CNPJ já foi cadastrado");
         }
 
         [HttpPut("UpdateCompany")]

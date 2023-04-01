@@ -55,13 +55,15 @@ namespace ProjectOverdrive.API.Controllers
         {
             if (vo == null) return BadRequest(); 
             var peopleAdd =  await _peopleRepository.AddPeople(vo);
-            return Ok(peopleAdd);
+            if (peopleAdd != null) return Ok(peopleAdd);
+            else return BadRequest("Esse Cpf ou Telefone já foi cadastrado");
         }
 
         [HttpPut("UpdatePeople")]
         public async Task<ActionResult<PeopleResponse>> UpdatePeople([FromBody] PeopleUpdateRequest vo)
         {
             if (vo == null) return BadRequest();
+            if (vo.Id == null) return BadRequest("Esse Id não existe.");
             var peopleUpdate = await _peopleRepository.UpdatePeople(vo);
             return Ok(peopleUpdate);
         }
