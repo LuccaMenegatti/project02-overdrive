@@ -60,7 +60,8 @@ namespace ProjectOverdrive.API.Controllers
         [HttpPut("UpdateCompany")]
         public async Task<ActionResult<CompanyUpdateRequest>> UpdateCompany([FromBody] CompanyUpdateRequest vo)
         {
-            if (vo == null) return BadRequest("Id invalido ou nulo");
+            if (vo == null) return BadRequest();
+            if (vo.Id == null) return BadRequest("Id não pode ser nulo");
             var companyUpdate = await _companyRepository.UpdateCompany(vo);
             return Ok(companyUpdate);
         }

@@ -6,7 +6,7 @@ namespace ProjectOverdrive.API.Data.ValueObjects.Request
     public class CompanyUpdateRequest
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public string CompanyName { get; set; }

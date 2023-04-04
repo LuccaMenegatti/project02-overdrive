@@ -5,7 +5,7 @@ namespace ProjectOverdrive.API.Data.ValueObjects.Request
     public class PeopleUpdateRequest
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public string Name { get; set; }
