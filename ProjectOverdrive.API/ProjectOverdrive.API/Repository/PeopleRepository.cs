@@ -50,7 +50,20 @@ namespace ProjectOverdrive.API.Repository
                 .Where(c => c.Id == idCompany)
                 .FirstOrDefaultAsync();
 
-            if(people.Status == Enum.Status.Active && company.Status == Enum.Status.Active)
+            var checkPessoa = await _dbContext.People
+                .Where(p => p.Id == idPeople)
+                .FirstOrDefaultAsync();
+
+            var checkCompany = await _dbContext.Company
+                .Where(c => c.Id == idCompany)
+                .FirstOrDefaultAsync();
+
+            if (checkPessoa == null || checkCompany == null)
+            {
+                throw new BadHttpRequestException("Empresa ou Pessoa invalida!");
+            }
+
+            if (people.Status == Enum.Status.Active && company.Status == Enum.Status.Active)
             {
                 people.Company = company;
                 _dbContext.People.Update(people);
@@ -59,7 +72,7 @@ namespace ProjectOverdrive.API.Repository
             }
             else
             {
-                throw new Exception("Para cadastrar, a pessoa e a empresa devem estar ativas!");
+                throw new BadHttpRequestException("Para cadastrar, a pessoa e a empresa devem estar ativas!");
             }
           
         }
@@ -70,13 +83,23 @@ namespace ProjectOverdrive.API.Repository
                 .Where(p => p.Id == idPeople)
                 .FirstOrDefaultAsync();
 
-            people.IdCompany = null;
-            people.Company = null;
+            var checkPessoa = await _dbContext.People
+                .Where(p => p.Id == idPeople)
+                .FirstOrDefaultAsync();
 
-            _dbContext.People.Update(people);
-            await _dbContext.SaveChangesAsync();
+            if (checkPessoa == null)
+            {
+                throw new BadHttpRequestException("Pessoa invalida!");
+            } else
+            {
+                people.IdCompany = null;
+                people.Company = null;
 
-            return _mapper.Map<PeopleResponse>(people);
+                _dbContext.People.Update(people);
+                await _dbContext.SaveChangesAsync();
+
+                return _mapper.Map<PeopleResponse>(people);
+            }
         }
 
         public async Task<PeopleResponse> AddPeople(PeopleRequest vo)
@@ -120,7 +143,16 @@ namespace ProjectOverdrive.API.Repository
                .AsNoTracking()
                .Where(c => c.Id == people.Id)
                .FirstOrDefaultAsync();
-           
+
+            var checkPeople = await _dbContext.People
+             .Where(p => p.Id == people.Id)
+             .FirstOrDefaultAsync();
+
+            if (checkPeople == null)
+            {
+                throw new BadHttpRequestException("Pessoa invalida!");
+            }
+
             people.Cpf = dbpeople.Cpf;
 
             var status =
@@ -142,14 +174,14 @@ namespace ProjectOverdrive.API.Repository
             People people = await _dbContext.People.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new People();
 
-            if (people == null) throw new Exception("Essa pessoa não existe no banco de dados");
+            if (people == null) throw new BadHttpRequestException("Essa pessoa não existe no banco de dados");
 
-            if (people.Status == Enum.Status.Pending) throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+            if (people.Status == Enum.Status.Pending) throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
 
             if (people.UserName is null || people.NumberContact is null ||
                 people.UserName.Trim() == "" || people.NumberContact.Trim() == "")
             {
-                throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+                throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
             }
             else
             {
@@ -162,7 +194,7 @@ namespace ProjectOverdrive.API.Repository
                 }
                 else
                 {
-                    throw new Exception("Essa pessoa já esta ativa.");
+                    throw new BadHttpRequestException("Essa pessoa já esta ativa.");
                 }
             }
         }
@@ -171,7 +203,7 @@ namespace ProjectOverdrive.API.Repository
         {
             People people = await _dbContext.People.Where(p => p.Id == id)
                 .FirstOrDefaultAsync() ?? new People();
-            if (people == null) throw new Exception("Essa pessoa não existe no banco de dados");
+            if (people == null) throw new BadHttpRequestException("Essa pessoa não existe no banco de dados");
             if (people.IdCompany == null)
             {
                 people.Status = Enum.Status.Inactive;
@@ -181,7 +213,7 @@ namespace ProjectOverdrive.API.Repository
             }
             else
             {
-                throw new Exception("Impossivel inativar, essa pessoa pertence a uma empresa.");
+                throw new BadHttpRequestException("Impossivel inativar, essa pessoa pertence a uma empresa.");
             }
         }
 
@@ -204,7 +236,7 @@ namespace ProjectOverdrive.API.Repository
                     }
                     else
                     {
-                        throw new Exception("Impossivel excluir, essa pessoa pertence a uma empresa.");
+                        throw new BadHttpRequestException("Impossivel excluir, essa pessoa pertence a uma empresa.");
                     }
                 }   
     }

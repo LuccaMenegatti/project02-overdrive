@@ -1,4 +1,6 @@
-﻿namespace ProjectOverdrive.API.Data.ValueObjects.Response
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProjectOverdrive.API.Data.ValueObjects.Response
 {
     public class AddressResponse
     {

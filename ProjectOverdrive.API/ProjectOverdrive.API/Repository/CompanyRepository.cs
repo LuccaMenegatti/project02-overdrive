@@ -111,6 +111,15 @@ namespace ProjectOverdrive.API.Repository
                 .Where(c => c.Id == company.Id)
                 .FirstOrDefaultAsync();
 
+            var checkCompany = await _dbContext.Company
+                .Where(p => p.Id == company.Id)
+                .FirstOrDefaultAsync();
+
+            if (checkCompany == null)
+            {
+                throw new BadHttpRequestException("Empresa invalida!");
+            }
+
             company.Cnpj = dbCompany.Cnpj;
             company.StartDate = dbCompany.StartDate;
 
@@ -143,9 +152,9 @@ namespace ProjectOverdrive.API.Repository
             Company company = await _dbContext.Company.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new Company();
 
-            if (company == null) throw new Exception("Essa empresa não existe no banco de dados");
+            if (company == null) throw new BadHttpRequestException("Essa empresa não existe no banco de dados");
 
-            if (company.Status == Enum.Status.Inactive) throw new Exception("Essa empresa já esta inativa.");
+            if (company.Status == Enum.Status.Inactive) throw new BadHttpRequestException("Essa empresa já esta inativa.");
 
             var checkPeople = await _dbContext.People
                 .Where(p => p.IdCompany == id)
@@ -160,7 +169,7 @@ namespace ProjectOverdrive.API.Repository
             }
             else
             {
-                throw new Exception("Impossivel inativar, existem pessoas nessa empresa.");
+                throw new BadHttpRequestException("Impossivel inativar, existem pessoas nessa empresa.");
             }
 
         }
@@ -170,14 +179,14 @@ namespace ProjectOverdrive.API.Repository
             Company company = await _dbContext.Company.Where(c => c.Id == id)
                   .FirstOrDefaultAsync() ?? new Company();
 
-            if (company == null) throw new Exception("Essa empresa não existe no banco de dados");
+            if (company == null) throw new BadHttpRequestException("Essa empresa não existe no banco de dados");
 
-            if(company.Status == Enum.Status.Pending) throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+            if(company.Status == Enum.Status.Pending) throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
 
             if (company.FantasyName is null || company.LegalNature is null ||
                 company.FantasyName.Trim() == "" || company.LegalNature.Trim() == "")
             {
-                throw new Exception("Para ativar, todos os dados devem ser preenchidos");
+                throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
             }
             else
             {
@@ -190,7 +199,7 @@ namespace ProjectOverdrive.API.Repository
                 }
                 else
                 {
-                    throw new Exception("Essa empresa já esta ativa.");
+                    throw new BadHttpRequestException("Essa empresa já esta ativa.");
                 }
             }
         }
@@ -217,7 +226,7 @@ namespace ProjectOverdrive.API.Repository
                 }
                 else
                 {
-                    throw new Exception("Impossivel excluir, existem pessoas nessa empresa.");
+                    throw new BadHttpRequestException("Impossivel excluir, existem pessoas nessa empresa.");
                 }
         }   
     }
