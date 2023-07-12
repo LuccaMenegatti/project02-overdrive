@@ -41,7 +41,7 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(company);
         }
 
-        [HttpGet("SearchPeopleInCompany{id}")]
+        [HttpGet("SearchPeopleInCompany/{id}")]
         public async Task<ActionResult<CompanyOffAddressResponse>> SearchPeopleInCompany(int id)
         {
             var peoples = await _companyRepository.SearchPeopleInCompany(id);
@@ -66,23 +66,15 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(companyUpdate);
         }
 
-        [HttpPut("ActiveCompany")]
-        public async Task<ActionResult<CompanyOffAddressAndPeopleResponse>> ActiveCompany(int id)
+        [HttpPut("ChangeStatus/{id}")]
+        public async Task<ActionResult<string>> ChangeStatus(int id)
         {
             if (id == null) return BadRequest();
-            var companyUpdate = await _companyRepository.ActiveCompany(id);
-            return Ok(companyUpdate);
+            var status = await _companyRepository.ChangeCompanyStatus(id);
+            return Ok(status);
         }
 
-        [HttpPut("InactiveCompany")]
-        public async Task<ActionResult<CompanyOffAddressAndPeopleResponse>> InactiveCompany(int id)
-        {
-            if (id == null) return BadRequest();
-            var companyUpdate = await _companyRepository.InactiveCompany(id);
-            return Ok(companyUpdate);
-        }
-
-        [HttpDelete("DeleteCompany")]
+        [HttpDelete("DeleteCompany/{id}")]
         public async Task<ActionResult<Company>> DeleteCompany(int id)
         {
             var deleted = await _companyRepository.DeleteCompany(id);

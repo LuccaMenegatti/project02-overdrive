@@ -15,6 +15,7 @@ namespace ProjectOverdrive.API.Data.ValueObjects.Response
         public string Cnae { get; set; }
         public string LegalNature { get; set; }
         public double Finance { get; set; }
+        public IEnumerable<PeopleRequest> Peoples { get; set; }
         public int? AddressId { get; set; }
         public virtual AddressResponse Address { get; set; }
     }

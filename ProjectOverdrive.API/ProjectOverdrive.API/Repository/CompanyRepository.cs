@@ -24,6 +24,7 @@ namespace ProjectOverdrive.API.Repository
         {
             List<Company> company = await _dbContext.Company
                 .Include(a => a.Address)
+                .Include(p => p.Peoples)
                 .ToListAsync();
 
              return _mapper.Map<List<SearchCompanyResponse>>(company); 
@@ -147,60 +148,42 @@ namespace ProjectOverdrive.API.Repository
                 return _mapper.Map<SearchCompanyResponse>(company);
         }
 
-        public async Task<CompanyOffAddressAndPeopleResponse> InactiveCompany(int id)
+        public async Task<string> ChangeCompanyStatus(int id)
         {
-            Company company = await _dbContext.Company.Where(c => c.Id == id)
-                  .FirstOrDefaultAsync() ?? new Company();
-
-            if (company == null) throw new BadHttpRequestException("Essa empresa não existe no banco de dados");
-
-            if (company.Status == Enum.Status.Inactive) throw new BadHttpRequestException("Essa empresa já esta inativa.");
-
-            var checkPeople = await _dbContext.People
-                .Where(p => p.IdCompany == id)
+            Company company = await _dbContext.Company
+                .Where(c => c.Id == id)
                 .FirstOrDefaultAsync();
 
-            if (checkPeople == null)
+            List<People> people = await _dbContext.People
+                .Where(p => p.IdCompany == id)
+                .ToListAsync();
+
+            if (company.Status != Enum.Status.Pending)
             {
-                company.Status = Enum.Status.Inactive;
-                _dbContext.Company.Update(company);
-                await _dbContext.SaveChangesAsync();
-                return _mapper.Map<CompanyOffAddressAndPeopleResponse>(company);
-            }
-            else
-            {
-                throw new BadHttpRequestException("Impossivel inativar, existem pessoas nessa empresa.");
-            }
-
-        }
-
-        public async Task<CompanyOffAddressAndPeopleResponse> ActiveCompany (int id)
-        {
-            Company company = await _dbContext.Company.Where(c => c.Id == id)
-                  .FirstOrDefaultAsync() ?? new Company();
-
-            if (company == null) throw new BadHttpRequestException("Essa empresa não existe no banco de dados");
-
-            if(company.Status == Enum.Status.Pending) throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
-
-            if (company.FantasyName is null || company.LegalNature is null ||
-                company.FantasyName.Trim() == "" || company.LegalNature.Trim() == "")
-            {
-                throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
-            }
-            else
-            {
-                if (company.Status == Enum.Status.Inactive)
+                var status = company.Status == Enum.Status.Active;
+                if (status)
                 {
-                    company.Status = Enum.Status.Active;
-                    _dbContext.Company.Update(company);
-                    await _dbContext.SaveChangesAsync();
-                    return _mapper.Map<CompanyOffAddressAndPeopleResponse>(company);
+                    company.Status = Enum.Status.Inactive;
+                    foreach (var person in people)
+                    {
+                        if (person != null)
+                        {
+                            person.IdCompany = null;
+                            person.Company = null;
+                        }
+                    }
                 }
                 else
                 {
-                    throw new BadHttpRequestException("Essa empresa já esta ativa.");
+                    company.Status = Enum.Status.Active;
                 }
+                _dbContext.Company.Update(company);
+                _dbContext.SaveChanges();
+                return _mapper.Map<string>(company.Status);
+            }
+            else
+            {
+                return _mapper.Map<string>(company.Status);
             }
         }
 

@@ -13,8 +13,7 @@ namespace ProjectOverdrive.API.Repository.Interfaces
         Task<CompanyOffAddressResponse> SearchPeopleInCompany(int id);
         Task<SearchCompanyResponse> AddCompany(CompanyRequest vo);
         Task<SearchCompanyResponse> UpdateCompany(CompanyUpdateRequest vo);
-        Task<CompanyOffAddressAndPeopleResponse> ActiveCompany(int id);
-        Task<CompanyOffAddressAndPeopleResponse> InactiveCompany(int id);
+        Task<string> ChangeCompanyStatus(int id);
         Task<bool> DeleteCompany(int id);
     }
 }

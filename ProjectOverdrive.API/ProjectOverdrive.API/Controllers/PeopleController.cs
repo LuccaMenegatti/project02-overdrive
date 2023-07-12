@@ -34,7 +34,15 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(people);
         }
 
-        [HttpPut("AddPeopleInCompany")]
+        [HttpGet("SearchPeopleByCpf/{cpf}")]
+        public async Task<ActionResult<List<PeopleResponse>>> SearchPeopleByCpf(string cpf)
+        {
+            var people = await _peopleRepository.SearchPeopleByCpf(cpf);
+            if (people == null) return NotFound();
+            return Ok(people);
+        }
+
+        [HttpPut("AddPeopleInCompany/{idPeople}/{idCompany}")]
         public async Task<ActionResult<PeopleResponse>> AddPeopleInCompany(int idPeople, int idCompany)
         {
             if (idPeople == 0 && idCompany == 0) return BadRequest();
@@ -42,7 +50,7 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(people);
         }
 
-        [HttpPut("RemovePeopleInCompany")]
+        [HttpPut("RemovePeopleInCompany/{idPeople}")]
         public async Task<ActionResult<PeopleResponse>> RemovePeopleInCompany(int idPeople)
         {
             if (idPeople == 0) return BadRequest();
@@ -68,20 +76,12 @@ namespace ProjectOverdrive.API.Controllers
             return Ok(peopleUpdate);
         }
 
-        [HttpPut("InactivePeople")]
-        public async Task<ActionResult<PeopleResponse>> InactivePeople(int id)
+        [HttpPut("ChangeStatus/{id}")]
+        public async Task<ActionResult<string>> ChangeStatus(int id)
         {
-            if (id == 0) return BadRequest();
-            var peopleUpdate = await _peopleRepository.InactivePeople(id);
-            return Ok(peopleUpdate);
-        }
-
-        [HttpPut("ActivePeople")]
-        public async Task<ActionResult<PeopleResponse>> ActivePeople(int id)
-        {
-            if (id == 0) return BadRequest();
-            var peopleUpdate = await _peopleRepository.ActivePeople(id);
-            return Ok(peopleUpdate);
+            if (id == null) return BadRequest();
+            var status = await _peopleRepository.ChangePeopleStatus(id);
+            return Ok(status);
         }
 
         [HttpDelete("DeletePeople/{id}")]

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectOverdrive.API.Data;
 using ProjectOverdrive.API.Data.ValueObjects.Request;
 using ProjectOverdrive.API.Data.ValueObjects.Response;
+using ProjectOverdrive.API.Enum;
 using ProjectOverdrive.API.Models;
 using ProjectOverdrive.API.Repository.Interfaces;
 using System.Net;
@@ -39,6 +40,16 @@ namespace ProjectOverdrive.API.Repository
                             .ToListAsync();
 
             return _mapper.Map<List<PeopleResponse>>(people);
+        }
+
+        public async Task<PeopleResponse> SearchPeopleByCpf(string cpf)
+        {
+            People people = await _dbContext.People
+                            .Where(p => p.Cpf == cpf)
+                            .Include(c => c.Company)
+                            .FirstOrDefaultAsync();
+
+            return _mapper.Map<PeopleResponse>(people);
         }
 
         public async Task<PeopleResponse> AddPeopleInCompany(int idPeople, int idCompany)
@@ -154,6 +165,8 @@ namespace ProjectOverdrive.API.Repository
             }
 
             people.Cpf = dbpeople.Cpf;
+            people.IdCompany = dbpeople.IdCompany;
+            people.Company = dbpeople.Company;
 
             var status =
                 people.Cpf != null &&
@@ -169,57 +182,34 @@ namespace ProjectOverdrive.API.Repository
             return _mapper.Map<PeopleResponse>(people);
         }
 
-        public async Task<PeopleResponse> ActivePeople(int id)
+        public async Task<string> ChangePeopleStatus(int id)
         {
-            People people = await _dbContext.People.Where(c => c.Id == id)
-                  .FirstOrDefaultAsync() ?? new People();
+            People people = await _dbContext.People
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
 
-            if (people == null) throw new BadHttpRequestException("Essa pessoa não existe no banco de dados");
-
-            if (people.Status == Enum.Status.Pending) throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
-
-            if (people.UserName is null || people.NumberContact is null ||
-                people.UserName.Trim() == "" || people.NumberContact.Trim() == "")
+            if (people.Status != Status.Pending)
             {
-                throw new BadHttpRequestException("Para ativar, todos os dados devem ser preenchidos");
-            }
-            else
-            {
-                if (people.Status == Enum.Status.Inactive)
+                var status = people.Status == Status.Active;
+                if (status)
                 {
-                    people.Status = Enum.Status.Active;
-                    _dbContext.People.Update(people);
-                    await _dbContext.SaveChangesAsync();
-                    return _mapper.Map<PeopleResponse>(people);
+                    people.Status = Status.Inactive;
+                    people.IdCompany = null;
+                    people.Company = null;
                 }
                 else
                 {
-                    throw new BadHttpRequestException("Essa pessoa já esta ativa.");
+                    people.Status = Status.Active;
                 }
-            }
-        }
-
-        public async Task<PeopleResponse> InactivePeople(int id)
-        {
-            People people = await _dbContext.People.Where(p => p.Id == id)
-                .FirstOrDefaultAsync() ?? new People();
-            if (people == null) throw new BadHttpRequestException("Essa pessoa não existe no banco de dados");
-            if (people.IdCompany == null)
-            {
-                people.Status = Enum.Status.Inactive;
                 _dbContext.People.Update(people);
-                await _dbContext.SaveChangesAsync();
-                return _mapper.Map<PeopleResponse>(people);
+                _dbContext.SaveChanges();
+                return _mapper.Map<string>(people.Status);
             }
             else
             {
-                throw new BadHttpRequestException("Impossivel inativar, essa pessoa pertence a uma empresa.");
+                return _mapper.Map<string>(people.Status);
             }
         }
-
-
-
-
 
         public async Task<bool> DeletePeople(int id)
         {
